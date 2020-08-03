@@ -2,11 +2,23 @@ on: [push]
 
 jobs:
   aarch64_job:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: Build on aarch64 
     steps:
       - uses: actions/checkout@v2.1.0
       - uses: cachix/install-nix-action@v10
+      - run: |
+         ARCH=$1
+         DISTRO=$2
+         COMMANDS=$3
+         COMMANDS="${COMMANDS//[$'\t\r\n']+/;}" #Replace newline with ;
+         ADDITIONAL_ARGS=$4
+         DEBIAN_FRONTEND=noninteractive
+         # Install support for new archs via qemu
+         # Platforms: linux/amd64, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/arm/v7, linux/arm/v6
+         sudo apt-get update -q -y && sudo apt-get install -q -y qemu qemu-user-static
+         mkdir -p ~/.config/nix
+         echo system-features = aarch64-linux arm-linux >> ~/.config/nix/nix.conf
       - uses: cachix/cachix-action@v6
         with:
           name: 573-bc
@@ -18,15 +30,6 @@ jobs:
         run: |
           $(readlink $(type -f nix-store)) --version
           echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
-      - uses: uraimo/run-on-arch-action@v1.0.9
-        id: runcmd
-        with:
-          architecture: aarch64
-          distribution: ubuntu18.04
-          run: |
-            :
-            $(readlink $(type -f nix-store)) --version
-            echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
       - name: Get the output
         run: |
             echo "The nix-store-version output was ${{ steps.runcmd.outputs.storeversion }}"
