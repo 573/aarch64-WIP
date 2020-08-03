@@ -16,7 +16,7 @@ jobs:
          DEBIAN_FRONTEND=noninteractive
          # Install support for new archs via qemu
          # Platforms: linux/amd64, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/arm/v7, linux/arm/v6
-         sudo apt-get update -q -y && sudo apt-get install -q -y qemu qemu-user-static
+         sudo apt-get update -q -y && sudo apt-get install -q -y qemu qemu-user-aarch64 binfmt-support qemu-user-static
          mkdir -p ~/.config/nix
          echo system-features = aarch64-linux arm-linux >> ~/.config/nix/nix.conf
       - uses: cachix/cachix-action@v6
@@ -27,11 +27,14 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # This gets everything from cache, but doesn't build neuron (yet).
       - name: nix-store-version
+        id: runcmd
         run: |
           $(readlink $(type -f nix-store)) --version
           echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
           nix-build "<nixpkgs>" -A pkgs.hello --argstr system aarch64-linux
+          hello -g "This is $(uname -r)"
           nix-build "<nixpkgs>" -A pkgsCross.aarch64-multiplatform.hello
+          hello -g "This is $(uname -r)"
       - name: Get the output
         run: |
             echo "The nix-store-version output was ${{ steps.runcmd.outputs.storeversion }}"
