@@ -13,7 +13,7 @@ jobs:
           architecture: aarch64
           distribution: ubuntu18.04
           run: |
-            . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+            . "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
             nix-store --version
             echo ::set-output name=storeversion::$(nix-store --version)
       - name: Get the output
