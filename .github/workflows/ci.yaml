@@ -7,6 +7,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2.1.0
       - uses: cachix/install-nix-action@v10
+      - uses: uraimo/run-on-arch-action@v1.0.9
+        id: runcmd
+        with:
+          architecture: aarch64
+          distribution: ubuntu18.04
+          #run: |
+          #  nix-store --version
+          #  echo ::set-output name=storeversion::$(nix-store --version)
       - uses: cachix/cachix-action@v6
         with:
           name: 573-bc
@@ -14,16 +22,10 @@ jobs:
           # Only needed for private caches
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # This gets everything from cache, but doesn't build neuron (yet).
-      - name: Nix
-        run: nix-store --version
-      - uses: uraimo/run-on-arch-action@v1.0.9
-        id: runcmd
-        with:
-          architecture: aarch64
-          distribution: ubuntu18.04
-          run: |
-            nix-store --version
-            echo ::set-output name=storeversion::$(nix-store --version)
+      - name: nix-store-version
+        run: |
+          /home/runner/work/_actions/uraimo/run-on-arch-action/v1.0.9/src/run-on-arch.sh aarch64 ubuntu18.04 nix-store --version
+          echo ::set-output name=storeversion::$(/home/runner/work/_actions/uraimo/run-on-arch-action/v1.0.9/src/run-on-arch.sh aarch64 ubuntu18.04 nix-store --version)
       - name: Get the output
         run: |
             echo "The nix-store-version output was ${{ steps.runcmd.outputs.storeversion }}"
