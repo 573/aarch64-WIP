@@ -33,7 +33,6 @@ jobs:
           echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
           nix-build "<nixpkgs>" -A pkgs.hello --argstr system aarch64-linux
           nix-build "<nixpkgs>" -A pkgsCross.aarch64-multiplatform.hello
-          $(type -p hello)
       - name: Get the output
         run: |
             echo "The nix-store-version output was ${{ steps.runcmd.outputs.storeversion }}"
