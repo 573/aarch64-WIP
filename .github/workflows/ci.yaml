@@ -7,15 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2.1.0
       - uses: cachix/install-nix-action@v10
-      - uses: uraimo/run-on-arch-action@v1.0.9
-        id: runcmd
-        with:
-          architecture: aarch64
-          distribution: ubuntu18.04
-          run: |
-            :
-          #  nix-store --version
-          #  echo ::set-output name=storeversion::$(nix-store --version)
       - uses: cachix/cachix-action@v6
         with:
           name: 573-bc
@@ -26,7 +17,16 @@ jobs:
       - name: nix-store-version
         run: |
           $(readlink $(type -f nix-store)) --version
-          #echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
+          echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
+      - uses: uraimo/run-on-arch-action@v1.0.9
+        id: runcmd
+        with:
+          architecture: aarch64
+          distribution: ubuntu18.04
+          run: |
+            :
+            $(readlink $(type -f nix-store)) --version
+            echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
       - name: Get the output
         run: |
             echo "The nix-store-version output was ${{ steps.runcmd.outputs.storeversion }}"
