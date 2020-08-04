@@ -31,7 +31,7 @@ jobs:
         run: |
           $(readlink $(type -f nix-store)) --version
           echo ::set-output name=storeversion::$($(readlink $(type -f nix-store)) --version)
-          #nix-build "<nixpkgs>" -A pkgs.hello --argstr system aarch64-linux
+          #nix-build "<nixpkgs>" -A pkgs.hello --argstr system aarch64-linux --extra-platforms aarch64-linux --argstr arch aarch64
           # https://www.reddit.com/r/NixOS/comments/7szcax/installing_nix_on_the_jolla_1_sailfish_os_armv7/
           nix-build '<nixpkgs>' --arg crossSystem '(import <nixpkgs/lib>).systems.examples.aarch64-multiplatform' -A hello
           #nix-build "<nixpkgs>" -A pkgsCross.aarch64-multiplatform.hello
