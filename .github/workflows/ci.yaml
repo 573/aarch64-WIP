@@ -43,7 +43,7 @@ jobs:
         run: |
           git clone https://github.com/srid/nix-bundle.git tmp/nix-bundle
           cd tmp/nix-bundle
-          ./nix-bundle.sh '(import ../.. {})' /bin/hello > ../../hello-aarch64-bundle
+          ./nix-bundle.sh '(import /nix/store/9vaqf4kbqr1xbf0v3lcgxalpqldllysf-hello-2.10-aarch64-unknown-linux-gnu {})' /bin/hello > ../../hello-aarch64-bundle
           cd -
           mkdir ~/bundle
           cp hello-aarch64-bundle ~/bundle/hello
