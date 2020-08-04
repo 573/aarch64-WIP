@@ -39,7 +39,7 @@ jobs:
         run: |
             echo "The nix-store-version output was ${{ steps.runcmd.outputs.storeversion }}"
       - name: Bundle up
-        if: ${{ github.ref == env.MAINLINE && runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' }}
         run: |
           git clone https://github.com/srid/nix-bundle.git tmp/nix-bundle
           cd tmp/nix-bundle
@@ -50,7 +50,7 @@ jobs:
           chmod a+x hello-aarch64-bundle ~/bundle/hello
       - name: Upload bundle as artifact 
         uses: actions/upload-artifact@v2
-        if: ${{ github.ref == env.MAINLINE && runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' }}
         with:
           name: hello-bundle-aarch64
           path: ~/bundle/hello
@@ -59,7 +59,7 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"
       - name: Upload bundle to nightly release
         uses: meeDamian/github-release@v2.0.3
-        if: ${{ github.ref == env.MAINLINE && runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: nightly
